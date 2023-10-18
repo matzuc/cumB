@@ -67,8 +67,9 @@ summary.cumB_curve <- function(object, ...) {
 }
 
 # Metodo plot
-plot.cumB_curve <- function(x, ...) {
-  plot(x$curve$x, x$curve$y, ...)
+plot.cumB_curve <- function(obj, ...) {
+
+  plot(obj$curve$x, obj$curve$y, ...)
   # Puoi personalizzare ulteriormente il grafico se lo desideri
 }
 
