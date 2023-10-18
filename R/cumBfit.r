@@ -1,4 +1,4 @@
-#' cumB
+#' cumBfit
 #'
 #' Descrizione dettagliata della funzione.
 #'
@@ -6,8 +6,9 @@
 #' @param y Descrizione del parametro y.
 #' @return Descrizione di ciò che viene restituito.
 #' @export
+#' @import drc
 
-cumB <- function(x, y, npoints = 5000){
+cumBfit <- function(x, y, npoints = 5000){
 
   # fit the model
   r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, 1, NA)))
