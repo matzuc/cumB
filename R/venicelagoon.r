@@ -8,7 +8,7 @@
 #'   \item{var2}{Descrizione della variabile var2.}
 #'   ... (e così via per ogni variabile nel dataframe) ...
 #' }
-#' @source Fonte del dataset, se applicabile.
+#' @source Anelli Monti et al., 2019
 #' @references Qualsiasi riferimento collegato al dataset.
 #' @examples
 #' \dontrun{

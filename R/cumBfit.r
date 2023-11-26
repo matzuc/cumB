@@ -13,7 +13,7 @@ cumBfit <- function(x, y, npoints = 5000){
   # fit the model
   r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, 1, NA)))
 
-  # use the fitted curve to predict the expected values (these are used fot plotting and estimating the parameters)
+  # use the fitted curve to predict the expected values (these are used for plotting and estimating the parameters)
 
   # xx are the TLs
   xx <- NA;
@@ -51,7 +51,7 @@ cumBfit <- function(x, y, npoints = 5000){
   return(results)
 }
 
-# Metodo print
+# Method for printing the object
 print.cumB_curve <- function(x, ...) {
   cat("My Curve Object\n")
   cat("Parameters:\n")
@@ -59,7 +59,7 @@ print.cumB_curve <- function(x, ...) {
   # Puoi aggiungere ulteriori dettagli se lo desideri
 }
 
-# Metodo summary
+# Method for the summary of the object
 summary.cumB_curve <- function(object, ...) {
   # Ad esempio, qui potresti fornire statistiche descrittive o misure di bontà di adattamento
   cat("Summary of My Curve Object\n")

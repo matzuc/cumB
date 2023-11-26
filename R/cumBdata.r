@@ -21,10 +21,21 @@
 cumBdata <- function(data, TL_col, B_col, threshold = 2.4) {
   library(dplyr)
 
-  data %>%
+  result <- data %>%
     filter(!!sym(TL_col) > threshold) %>%
     arrange(!!sym(TL_col)) %>%
     mutate(cumB = cumsum(!!sym(B_col))) %>%
     mutate(cumBst = cumB / max(cumB))
 
+  class(result) <- c("cumBdata_class", class(result))
+  return(result)
+}
+
+
+# Method for the summary of the object
+summary.cumBdata_class <- function(object, ...) {
+  # Qui puoi inserire la logica per generare il tuo riepilogo personalizzato
+  cat("Summary of cumBdata_class\n")
+  print(paste0("N. species = ", nrow(object)))
+  # Altre statistiche o informazioni possono essere aggiunte qui
 }
