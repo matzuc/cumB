@@ -19,6 +19,7 @@ cumBdata(data, TL_col, B_col, threshold = 2.4)
 A dataframe with rows filtered, arranged, and with columns `cumB` and `cumBst` added.
 `cumB` contains the cumulative values of the B column, and `cumBst` contains the standardized cumulative values of the B column.
 #' @importFrom dplyr filter arrange mutate
+#' @importFrom ggplot2 filter arrange mutate
 }
 \description{
 This function calculates the cumulative biomass for given data, filtering rows based on a threshold

@@ -8,10 +8,10 @@
 #' @export
 #' @import drc
 
-cumBfit <- function(x, y, npoints = 5000){
+cumBfit <- function(x, y, npoints = 2000, drmfun =  baro5(fixed = c(NA, NA, NA, 1, NA))){
 
   # fit the model
-  r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, 1, NA)))
+  r <- drm(y ~ x, fct = drmfun)
 
   # use the fitted curve to predict the expected values (these are used for plotting and estimating the parameters)
 
