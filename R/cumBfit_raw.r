@@ -2,33 +2,28 @@
 #'
 #' Descrizione dettagliata della funzione.
 #'
-#' @param x Descrizione del parametro x.
+#' @param cumBdata Dataset
 #' @param y Descrizione del parametro y.
 #' @return Descrizione di ciò che viene restituito.
 #' @export
 #' @import drc
 
-cumBfit <- function(x, y, npoints = 2000, drmfun =  baro5(fixed = c(NA, NA, NA, 1, NA)), TLrange = c(1.6, 5)){
+cumBfit_raw <- function(cumBdata, npoints = 5000){
 
   # fit the model
-  r <- drm(y ~ x, fct = drmfun)
+  r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, 1, NA)))
 
   # use the fitted curve to predict the expected values (these are used for plotting and estimating the parameters)
 
-
-  minX <- min(min(x), TLrange[1])
-  maxX <- min(max(x), TLrange[2])
-
-
   # xx are the TLs
   xx <- NA;
-  xx <- seq(minX, maxX,length.out = npoints)
+  xx <- seq(1.6, 5,length.out = npoints)
   pr <- NA; length(pr) <- npoints# vector for prediction
   pr <- predict(r, newdata = data.frame(x = xx))
 
   # parameters
 
-  dpr<-diff(pr,1)/diff(xx)
+  dpr <- diff(pr,1)/diff(xx)
 
   # TL @ inflection point
   TLinfl <- xx[which.max(dpr)-1]
@@ -38,17 +33,6 @@ cumBfit <- function(x, y, npoints = 2000, drmfun =  baro5(fixed = c(NA, NA, NA, 
   BIOinfl<- predict(r, newdata=data.frame(x = TLinfl))
   # Lower asymptote
   LowA <- predict(r, newdata=data.frame(x=1))
-  UpperA <- predict(r, newdata=data.frame(x=max(xx)))
-
-
-
-  # metriche sui punti osservati
-  yhat_obs <- as.numeric(stats::predict(r, newdata = data.frame(x = x)))
-  resid    <- y - yhat_obs
-  sse <- sum(resid^2, na.rm = TRUE)
-  sst <- sum((y - mean(y, na.rm = TRUE))^2, na.rm = TRUE)
-  pseudo_r2 <- if (sst > 0) 1 - sse/sst else NA_real_
-  rmse <- sqrt(mean(resid^2, na.rm = TRUE))
 
 
 
@@ -56,10 +40,9 @@ cumBfit <- function(x, y, npoints = 2000, drmfun =  baro5(fixed = c(NA, NA, NA, 
   # Crea una lista con tutti i risultati
   results <- list(
     curve = data.frame(x = xx, y = pr),
-    parameters = data.frame(LowA = LowA, Steepness = Steepness, TLinfl = TLinfl, BIOinfl = BIOinfl, UpperA = UpperA),
+    parameters = data.frame(LowA = LowA, Steepness = Steepness, TLinfl = TLinfl, BIOinfl = BIOinfl),
     model = r,
-    predictions = pr,
-    gof = c(pseudo_r2 = pseudo_r2, rmse = rmse)
+    predictions = pr
   )
 
   # Imposta la classe dell'oggetto risultante
