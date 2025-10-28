@@ -4,7 +4,13 @@
 \alias{cumBfit}
 \title{cumBfit}
 \usage{
-cumBfit(x, y, npoints = 2000, drmfun = baro5(fixed = c(NA, NA, NA, 1, NA)))
+cumBfit(
+  x,
+  y,
+  npoints = 2000,
+  drmfun = baro5(fixed = c(NA, NA, NA, 1, NA)),
+  TLrange = c(1.6, 5)
+)
 }
 \arguments{
 \item{x}{Descrizione del parametro x.}
