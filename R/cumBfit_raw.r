@@ -11,7 +11,7 @@
 cumBfit_raw <- function(cumBdata, npoints = 5000){
 
   # fit the model
-  r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, 1, NA)))
+  r <- drm(y ~ x, fct = baro5(fixed = c(NA, NA, NA, NA, NA)))
 
   # use the fitted curve to predict the expected values (these are used for plotting and estimating the parameters)
 

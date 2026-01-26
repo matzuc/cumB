@@ -16,6 +16,8 @@ cumBfit(
 \item{x}{Descrizione del parametro x.}
 
 \item{y}{Descrizione del parametro y.}
+
+\item{drmfun}{paramenters for the DRC curve fitting}
 }
 \value{
 Descrizione di ciò che viene restituito.
