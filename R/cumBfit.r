@@ -4,9 +4,11 @@
 #'
 #' @param x Descrizione del parametro x.
 #' @param y Descrizione del parametro y.
+#' @param drmfun paramenters for the DRC curve fitting
 #' @return Descrizione di ciò che viene restituito.
 #' @export
 #' @import drc
+
 
 cumBfit <- function(x, y, npoints = 2000, drmfun =  baro5(fixed = c(NA, NA, NA, 1, NA)), TLrange = c(1.6, 5)){
 
