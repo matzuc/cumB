@@ -2,81 +2,60 @@
 % Please edit documentation in R/boot_grouped_samples.R
 \name{boot_grouped_samples}
 \alias{boot_grouped_samples}
-\title{Nonparametric bootstrap within grouping combinations (row- or cluster-level)}
+\title{Nonparametric bootstrap within ecological units (row- or cluster-level)}
 \usage{
 boot_grouped_samples(
   data,
-  group_by = character(0),
+  curve_by = character(0),
   id_unit = NULL,
   B = 999,
   replace = TRUE,
   seed = NULL,
-  boot_col_name = ".boot"
+  boot_col_name = ".boot",
+  group = NULL,
+  aggregate_fun = mean
 )
 }
 \arguments{
-\item{data}{A `data.frame` (or tibble) containing the observations.}
+\item{data}{A `data.frame` or tibble containing the observations.}
 
-\item{group_by}{Character vector of column names defining the strata within
-which resampling occurs (e.g., `c("area","year")`). Use `character(0)` for
-unstratified bootstrap over the whole dataset.}
+\item{curve_by}{Character vector defining the ecological units within which
+resampling occurs (e.g. `c("area","year")`). Use `character(0)` for a single
+global unit.}
 
-\item{id_unit}{Optional single character string naming a column that identifies
-the **cluster** (e.g., station/transect/haul). If `NULL`, resampling is at the
-**row** level; if provided, resampling is at the **cluster** level.}
+\item{id_unit}{Optional character string identifying clusters
+(e.g. station, haul). If `NULL`, row-level bootstrap is used.}
 
-\item{B}{Integer, number of bootstrap replicates. Default: `999`.}
+\item{B}{Integer. Number of bootstrap replicates. Default `999`.}
 
-\item{replace}{Logical, resample with replacement. Default: `TRUE` (bootstrap).}
+\item{replace}{Logical. Resample with replacement. Default `TRUE`.}
 
-\item{seed}{Optional integer to set the RNG seed for reproducibility. Default: `NULL`.}
+\item{seed}{Optional integer seed for reproducibility.}
 
-\item{boot_col_name}{Name of the replicate id column in the output. Default: `".boot"`.}
+\item{boot_col_name}{Name of the bootstrap replicate column. Default `".boot"`.}
+
+\item{group}{Optional character string identifying replicated datasets
+(typically equal to `boot_col_name`). If provided, bootstrap replicates
+are aggregated across this column.}
+
+\item{aggregate_fun}{Function used to aggregate replicated values across
+`group` (default `mean`). Must accept `na.rm`.}
 }
 \value{
-A `data.frame` containing the concatenation of all bootstrap replicates with an
-extra integer column `boot_col_name` in `1..B`. Grouping columns are preserved.
-The function also attaches attributes:
-- `boot_B` (number of replicates),
-- `boot_group_by` (grouping columns),
-- `boot_id_unit` (cluster id column or `NULL`),
-- `boot_seed` (seed used or `NULL`).
+A data.frame containing bootstrap samples. If `group` is provided, bootstrap
+replicates are aggregated accordingly.
+
+Attributes describing the bootstrap design are attached to the output.
 }
 \description{
-Generates \eqn{B} nonparametric bootstrap samples by resampling **within each
-combination** of grouping factors. If `id_unit` is provided, performs a
-**cluster bootstrap** (resampling clusters with replacement and taking all rows
-of the selected clusters); otherwise performs a **row-level bootstrap**
-(resampling rows with replacement). The output stacks all replicates and adds
-a `.boot` column (1..B).
-}
-\details{
-- **Row bootstrap** (`id_unit = NULL`): within each group `g`, sample `n_g`
-  row indices with replacement from the rows belonging to `g`.
-- **Cluster bootstrap** (`id_unit` provided): within each group `g`, find the
-  unique clusters; sample `m_g` cluster ids with replacement (where `m_g` is
-  the original number of unique clusters in `g`), and bind all rows belonging
-  to each sampled cluster (duplicating clusters as needed).
-- If a group has fewer than 1 row (i.e., empty), an error is thrown.
-- The **original group sizes** are preserved in expectation per replicate
-  (row bootstrap: exact size; cluster bootstrap: exact number of clusters,
-  but the number of rows depends on cluster sizes).
-}
-\examples{
-set.seed(1)
-df <- data.frame(
-  area = rep(LETTERS[1:2], each = 6),
-  year = rep(rep(2019:2020, each = 3), 2),
-  station = rep(paste0("S", 1:3), 4),
-  value = rpois(12, lambda = 5)
-)
+Generates nonparametric bootstrap samples by resampling observations
+**within each ecological unit** defined by `curve_by`.
 
-# Row-level bootstrap within area × year
-boot_row <- boot_grouped_samples(df, group_by = c("area","year"), B = 10, seed = 42)
-table(boot_row$.boot)
+If `id_unit` is provided, a **cluster bootstrap** is performed (e.g. stations);
+otherwise a **row-level bootstrap** is used.
 
-# Cluster-level bootstrap (station) within area × year
-boot_clu <- boot_grouped_samples(df, group_by = c("area","year"),
-                                 id_unit = "station", B = 10, seed = 42)
-
+Optionally, if `group` is provided (typically a bootstrap identifier such as
+`.boot`), replicated datasets are aggregated across replicates using
+`aggregate_fun`, while preserving the ecological structure defined by
+`curve_by`.
 }

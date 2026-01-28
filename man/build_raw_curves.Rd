@@ -8,46 +8,81 @@ build_raw_curves(
   data,
   tl_col,
   biomass_col,
-  group_by = character(0),
+  curve_by = character(0),
+  group = NULL,
   step = 0.1,
   min_lim = 1,
   max_lim = 5.4,
   right = FALSE,
   digits = 6,
   keep_empty_bins = FALSE,
+  aggregate_fun = mean,
   make_gr = TRUE
 )
 }
 \arguments{
-\item{data}{A data.frame/tibble.}
+\item{data}{A data.frame or tibble.}
 
-\item{tl_col}{Name of the TL column (numeric).}
+\item{tl_col}{Character string. Name of the trophic level (TL) column (numeric).}
 
-\item{biomass_col}{Name of the biomass/abundance column (numeric).}
+\item{biomass_col}{Character string. Name of the biomass or abundance column (numeric).}
 
-\item{group_by}{Character vector of column names defining curve identity
-(e.g. c("area","year","period") or c("area","year",".boot")). Use
-character(0) for a single global curve.}
+\item{curve_by}{Character vector. Columns defining the ecological identity of
+each curve (e.g. `c("area","year")`). Use `character(0)` for a single global curve.}
 
-\item{step, min_lim, max_lim}{TL binning parameters.}
+\item{group}{Optional character string. Column identifying replicated curves
+(e.g. `.boot`). If provided, curves are first built for `curve_by` and then
+aggregated across `group`.}
 
-\item{right}{Logical passed to `cut()`. Default FALSE gives [a,b) intervals.}
+\item{step}{Numeric (> 0). TL bin width. Default `0.1`.}
 
-\item{digits}{Integer; TL rounded before cutting to avoid boundary issues.}
+\item{min_lim, max_lim}{Numeric. Lower and upper TL limits.}
 
-\item{keep_empty_bins}{If TRUE, completes missing TL bins within each group,
-filling `B = 0`. Requires tidyr.}
+\item{right}{Logical. Passed to `cut()`. Default `FALSE` gives `[a,b)` intervals.}
 
-\item{boot_col_name}{Optional column name for a curve id to help plotting.
-If provided, creates `gr` by pasting together `group_by` values.}
+\item{digits}{Integer. Number of decimals used to round TL before binning.}
+
+\item{keep_empty_bins}{Logical. If `TRUE`, all TL bins are kept for each curve,
+filling missing bins with `B = 0`. Requires \pkg{tidyr}.}
+
+\item{aggregate_fun}{Function. Aggregation function used to combine replicated
+curves across `group`. Default is `mean`.}
+
+\item{make_gr}{Logical. If `TRUE`, creates a plotting id column `gr` by combining
+`curve_by` and (if present) `group`.}
 }
 \value{
-A tibble with grouping columns, `fTLr`, `B`, `cumB`, `cumBst`
-  (and optionally `gr`).
+A tibble with:
+\itemize{
+  \item grouping columns (`curve_by` and optionally `group`);
+  \item `fTLr`: numeric TL bin midpoints;
+  \item `B`: binned biomass;
+  \item `cumB`: cumulative biomass;
+  \item `cumBst`: standardized cumulative biomass (0–1);
+  \item `gr` (optional): curve identifier for plotting.
+}
+
+Attributes describing the TL binning are attached to the output.
 }
 \description{
-Creates raw curves by binning TL into fixed-width classes (numeric midpoints),
-summing biomass within each TL bin and within each combination of grouping
-factors, and then computing cumulative biomass (`cumB`) and standardized
-cumulative biomass (`cumBst`).
+Constructs raw trophic-level cumulative curves by:
+\enumerate{
+  \item binning trophic level (TL) values into fixed-width classes
+  (numeric midpoints, `fTLr`);
+  \item summing biomass (or abundance) within each TL bin and within each
+  ecological unit defined by `curve_by`;
+  \item optionally aggregating replicated curves (e.g. bootstrap samples)
+  defined by `group`;
+  \item computing cumulative biomass (`cumB`) and standardized cumulative
+  biomass (`cumBst`).
+}
+
+The key design principle is the explicit separation between:
+\itemize{
+  \item \strong{curve identity} (`curve_by`): defines the ecological unit
+  (e.g. area × year) for which a curve is constructed;
+  \item \strong{replicates} (`group`): defines statistical replicates
+  (e.g. bootstrap, permutation, simulation) that are \emph{not} part of the
+  ecological aggregation and are combined only after curves are built.
+}
 }
